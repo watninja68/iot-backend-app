@@ -26,7 +26,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/", s.HelloWorldHandler)
 
 	r.Get("/health", s.healthHandler)
-	r.Get("/data", s.healthHandler)
+	r.Get("/data", s.GetData)
 	return r
 }
 func (s *Server) GetData(w http.ResponseWriter, r *http.Request) {
