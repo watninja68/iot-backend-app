@@ -11,6 +11,8 @@ import (
 	"github.com/go-chi/cors"
 )
 
+var value = "0"
+
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -24,15 +26,31 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	r.Get("/", s.HelloWorldHandler)
-
+	r.Get("/get", s.showValue)
 	r.Get("/health", s.healthHandler)
 	r.Get("/data", s.GetData)
 	return r
 }
+func (s *Server) showValue(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	resp := make(map[string]string)
+	resp["currentValue"] = value
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		http.Error(w, "Failed to marshal JSON response", http.StatusInternalServerError)
+		log.Printf("error handling JSON marshal for ShowValue. Err: %v", err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(jsonResp)
+
+}
 func (s *Server) GetData(w http.ResponseWriter, r *http.Request) {
 
 	input := r.URL.Query().Get("sensor")
-	fmt.Println("Input from the senors are :- ", input)	
+	fmt.Println("Input from the senors are :- ", input)
+	value = input
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
@@ -50,6 +68,6 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	//jsonResp, _ := json.Marshal(s.db.Health())
-	jsonResp , _:= json.Marshal("Working")
+	jsonResp, _ := json.Marshal("Working")
 	_, _ = w.Write(jsonResp)
 }
