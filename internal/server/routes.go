@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/cors"
 )
 
-var value = "0"
+var value = "25"
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
@@ -48,9 +48,8 @@ func (s *Server) showValue(w http.ResponseWriter, r *http.Request) {
 }
 func (s *Server) GetData(w http.ResponseWriter, r *http.Request) {
 
-	input := r.URL.Query().Get("sensor")
-	fmt.Println("Input from the senors are :- ", input)
-	value = input
+	value  = r.URL.Query().Get("sensor")
+	fmt.Println("Input from the senors are :- ", value)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
